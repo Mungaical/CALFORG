@@ -29,8 +29,27 @@ import {
   Sliders,
   Monitor,
   Smartphone,
-  Tablet
+  Tablet,
+  Sparkles,
+  Zap,
+  Star
 } from 'lucide-react';
+
+// Sample video URLs for demo
+const SAMPLE_VIDEOS = [
+  'https://www.youtube.com/embed/K4TOrB7at0Y',
+  'https://www.youtube.com/embed/W7qWa52k-nE', 
+  'https://www.youtube.com/embed/8LXVhSbHo5Y',
+  'https://www.youtube.com/embed/dQw4w9WgXcQ'
+];
+
+// Sample thumbnails for demo
+const SAMPLE_THUMBNAILS = [
+  'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1536440136628-849c177e76a1?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1574717024653-61fd2cf4d44d?w=300&h=200&fit=crop',
+  'https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=300&h=200&fit=crop'
+];
 
 // Main Cal Forge Component
 const CalForge = () => {
@@ -38,11 +57,28 @@ const CalForge = () => {
   const [selectedProject, setSelectedProject] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [prompt, setPrompt] = useState('');
-  const [generatedVideos, setGeneratedVideos] = useState([]);
+  const [generatedVideos, setGeneratedVideos] = useState([
+    {
+      id: 1,
+      prompt: 'A futuristic city at sunset with flying cars and neon lights',
+      url: SAMPLE_VIDEOS[0],
+      thumbnail: SAMPLE_THUMBNAILS[0],
+      duration: '0:15',
+      created: '2 hours ago'
+    },
+    {
+      id: 2,
+      prompt: 'A majestic dragon soaring through cloudy mountains',
+      url: SAMPLE_VIDEOS[1],
+      thumbnail: SAMPLE_THUMBNAILS[1],
+      duration: '0:12',
+      created: '5 hours ago'
+    }
+  ]);
   const [assets, setAssets] = useState([]);
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gray-900 text-white font-sans">
       {/* Header */}
       <Header activeTab={activeTab} setActiveTab={setActiveTab} />
       
@@ -78,18 +114,21 @@ const CalForge = () => {
 // Header Component
 const Header = ({ activeTab, setActiveTab }) => {
   return (
-    <header className="bg-gray-800 border-b border-gray-700 h-16 flex items-center justify-between px-6">
+    <header className="bg-gray-800 border-b border-gray-700 h-16 flex items-center justify-between px-6 shadow-lg">
       <div className="flex items-center space-x-8">
         <div className="flex items-center space-x-3">
-          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <Wand2 className="w-5 h-5" />
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center shadow-lg">
+            <Sparkles className="w-5 h-5" />
           </div>
-          <h1 className="text-xl font-bold">Cal Forge</h1>
+          <h1 className="text-xl font-bold bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+            Cal Forge
+          </h1>
+          <span className="px-2 py-1 bg-purple-600 text-xs rounded-full">AI</span>
         </div>
         
         <nav className="flex space-x-1">
           {[
-            { id: 'create', label: 'Create', icon: Plus },
+            { id: 'create', label: 'Create', icon: Wand2 },
             { id: 'scenes', label: 'Scenes', icon: Film },
             { id: 'assets', label: 'Assets', icon: Layers },
             { id: 'projects', label: 'Projects', icon: Grid3X3 }
@@ -97,9 +136,9 @@ const Header = ({ activeTab, setActiveTab }) => {
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`px-4 py-2 rounded-md flex items-center space-x-2 transition-all ${
+              className={`px-4 py-2 rounded-lg flex items-center space-x-2 transition-all duration-200 ${
                 activeTab === id
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
                   : 'text-gray-300 hover:text-white hover:bg-gray-700'
               }`}
             >
@@ -111,10 +150,14 @@ const Header = ({ activeTab, setActiveTab }) => {
       </div>
       
       <div className="flex items-center space-x-4">
-        <button className="p-2 rounded-md hover:bg-gray-700 transition-colors">
+        <motion.button 
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          className="p-2 rounded-lg hover:bg-gray-700 transition-colors"
+        >
           <Settings className="w-5 h-5" />
-        </button>
-        <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+        </motion.button>
+        <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
           <span className="text-sm font-medium">CF</span>
         </div>
       </div>
@@ -124,7 +167,7 @@ const Header = ({ activeTab, setActiveTab }) => {
 
 // Sidebar Component
 const Sidebar = ({ activeTab, assets, setAssets }) => {
-  const [expandedSections, setExpandedSections] = useState(['recent', 'ingredients']);
+  const [expandedSections, setExpandedSections] = useState(['recent', 'ingredients', 'camera']);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => 
@@ -135,7 +178,7 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
   };
 
   return (
-    <div className="w-64 bg-gray-800 border-r border-gray-700 overflow-y-auto">
+    <div className="w-64 bg-gray-800 border-r border-gray-700 overflow-y-auto shadow-xl">
       <div className="p-4">
         {/* Search */}
         <div className="relative mb-6">
@@ -143,7 +186,7 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
           <input
             type="text"
             placeholder="Search assets..."
-            className="w-full bg-gray-700 text-white pl-10 pr-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-gray-700 text-white pl-10 pr-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
           />
         </div>
 
@@ -154,13 +197,27 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
           onToggle={() => toggleSection('recent')}
         >
           <div className="space-y-2">
-            {['Cinematic Scene', 'Product Demo', 'Character Animation'].map((project, index) => (
-              <div key={index} className="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-700 cursor-pointer">
-                <div className="w-8 h-8 bg-gray-600 rounded-md flex items-center justify-center">
-                  <Video className="w-4 h-4" />
+            {[
+              { name: 'Cinematic Scene', icon: Film, status: 'active' },
+              { name: 'Product Demo', icon: Video, status: 'completed' },
+              { name: 'Character Animation', icon: Sparkles, status: 'draft' }
+            ].map((project, index) => (
+              <motion.div 
+                key={index} 
+                whileHover={{ x: 4 }}
+                className="flex items-center space-x-3 p-2 rounded-lg hover:bg-gray-700 cursor-pointer transition-all"
+              >
+                <div className="w-8 h-8 bg-gray-600 rounded-lg flex items-center justify-center">
+                  <project.icon className="w-4 h-4" />
                 </div>
-                <span className="text-sm">{project}</span>
-              </div>
+                <div className="flex-1">
+                  <span className="text-sm font-medium">{project.name}</span>
+                  <div className={`w-2 h-2 rounded-full ${
+                    project.status === 'active' ? 'bg-green-400' :
+                    project.status === 'completed' ? 'bg-blue-400' : 'bg-gray-400'
+                  } inline-block ml-2`}></div>
+                </div>
+              </motion.div>
             ))}
           </div>
         </SidebarSection>
@@ -174,20 +231,28 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
           <div className="space-y-3">
             <div className="grid grid-cols-2 gap-2">
               {[
-                { type: 'character', name: 'Hero', color: 'bg-green-600' },
-                { type: 'environment', name: 'Forest', color: 'bg-amber-600' },
-                { type: 'object', name: 'Sword', color: 'bg-red-600' },
-                { type: 'effect', name: 'Magic', color: 'bg-purple-600' }
+                { type: 'character', name: 'Hero', color: 'from-green-500 to-emerald-600' },
+                { type: 'environment', name: 'Forest', color: 'from-amber-500 to-orange-600' },
+                { type: 'object', name: 'Sword', color: 'from-red-500 to-rose-600' },
+                { type: 'effect', name: 'Magic', color: 'from-purple-500 to-violet-600' }
               ].map((ingredient, index) => (
-                <div key={index} className="aspect-square bg-gray-700 rounded-md p-3 hover:bg-gray-600 cursor-pointer transition-colors">
-                  <div className={`w-full h-2/3 ${ingredient.color} rounded-sm mb-2`}></div>
-                  <p className="text-xs truncate">{ingredient.name}</p>
-                </div>
+                <motion.div 
+                  key={index} 
+                  whileHover={{ scale: 1.05 }}
+                  className="aspect-square bg-gray-700 rounded-lg p-3 hover:bg-gray-600 cursor-pointer transition-all shadow-lg"
+                >
+                  <div className={`w-full h-2/3 bg-gradient-to-br ${ingredient.color} rounded-sm mb-2 shadow-inner`}></div>
+                  <p className="text-xs truncate font-medium">{ingredient.name}</p>
+                </motion.div>
               ))}
             </div>
-            <button className="w-full p-2 border-2 border-dashed border-gray-500 rounded-md text-gray-400 hover:text-white hover:border-gray-400 transition-colors">
+            <motion.button 
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full p-3 border-2 border-dashed border-gray-500 rounded-lg text-gray-400 hover:text-white hover:border-gray-400 transition-all"
+            >
               <Plus className="w-4 h-4 mx-auto" />
-            </button>
+            </motion.button>
           </div>
         </SidebarSection>
 
@@ -198,14 +263,21 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
           onToggle={() => toggleSection('camera')}
         >
           <div className="space-y-2">
-            {['Wide Shot', 'Close-up', 'Dolly In', 'Pan Left', 'Zoom Out'].map((preset, index) => (
-              <button
+            {[
+              { name: 'Wide Shot', icon: Monitor },
+              { name: 'Close-up', icon: Camera },
+              { name: 'Dolly In', icon: Zap },
+              { name: 'Pan Left', icon: RotateCcw },
+              { name: 'Zoom Out', icon: Maximize }
+            ].map((preset, index) => (
+              <motion.button
                 key={index}
-                className="w-full text-left p-2 rounded-md hover:bg-gray-700 transition-colors flex items-center space-x-2"
+                whileHover={{ x: 4 }}
+                className="w-full text-left p-2 rounded-lg hover:bg-gray-700 transition-all flex items-center space-x-2"
               >
-                <Camera className="w-4 h-4" />
-                <span className="text-sm">{preset}</span>
-              </button>
+                <preset.icon className="w-4 h-4 text-blue-400" />
+                <span className="text-sm">{preset.name}</span>
+              </motion.button>
             ))}
           </div>
         </SidebarSection>
@@ -218,13 +290,19 @@ const Sidebar = ({ activeTab, assets, setAssets }) => {
 const SidebarSection = ({ title, isExpanded, onToggle, children }) => {
   return (
     <div className="mb-6">
-      <button
+      <motion.button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-2 hover:bg-gray-700 rounded-md transition-colors"
+        whileHover={{ x: 2 }}
+        className="w-full flex items-center justify-between p-2 hover:bg-gray-700 rounded-lg transition-all"
       >
         <span className="font-medium text-sm">{title}</span>
-        {isExpanded ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-      </button>
+        <motion.div
+          animate={{ rotate: isExpanded ? 90 : 0 }}
+          transition={{ duration: 0.2 }}
+        >
+          <ChevronRight className="w-4 h-4" />
+        </motion.div>
+      </motion.button>
       <AnimatePresence>
         {isExpanded && (
           <motion.div
@@ -234,7 +312,7 @@ const SidebarSection = ({ title, isExpanded, onToggle, children }) => {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="mt-2">
+            <div className="mt-3">
               {children}
             </div>
           </motion.div>
@@ -257,27 +335,38 @@ const MainWorkspace = ({
   setSelectedProject 
 }) => {
   return (
-    <div className="flex-1 flex flex-col">
-      {activeTab === 'create' && (
-        <CreateTab 
-          prompt={prompt}
-          setPrompt={setPrompt}
-          isGenerating={isGenerating}
-          setIsGenerating={setIsGenerating}
-          generatedVideos={generatedVideos}
-          setGeneratedVideos={setGeneratedVideos}
-        />
-      )}
-      {activeTab === 'scenes' && <ScenesTab />}
-      {activeTab === 'assets' && <AssetsTab />}
-      {activeTab === 'projects' && <ProjectsTab />}
+    <div className="flex-1 flex flex-col bg-gray-900">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={activeTab}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex-1"
+        >
+          {activeTab === 'create' && (
+            <CreateTab 
+              prompt={prompt}
+              setPrompt={setPrompt}
+              isGenerating={isGenerating}
+              setIsGenerating={setIsGenerating}
+              generatedVideos={generatedVideos}
+              setGeneratedVideos={setGeneratedVideos}
+            />
+          )}
+          {activeTab === 'scenes' && <ScenesTab />}
+          {activeTab === 'assets' && <AssetsTab />}
+          {activeTab === 'projects' && <ProjectsTab />}
+        </motion.div>
+      </AnimatePresence>
     </div>
   );
 };
 
 // Create Tab Component
 const CreateTab = ({ prompt, setPrompt, isGenerating, setIsGenerating, generatedVideos, setGeneratedVideos }) => {
-  const [selectedVideo, setSelectedVideo] = useState(null);
+  const [selectedVideo, setSelectedVideo] = useState(generatedVideos[0] || null);
 
   const handleGenerate = async () => {
     if (!prompt.trim()) return;
@@ -286,13 +375,16 @@ const CreateTab = ({ prompt, setPrompt, isGenerating, setIsGenerating, generated
     
     // Simulate video generation
     setTimeout(() => {
+      const randomVideoIndex = Math.floor(Math.random() * SAMPLE_VIDEOS.length);
+      const randomThumbnailIndex = Math.floor(Math.random() * SAMPLE_THUMBNAILS.length);
+      
       const newVideo = {
         id: Date.now(),
         prompt: prompt,
-        url: `https://www.youtube.com/embed/dQw4w9WgXcQ?autoplay=1&mute=1&controls=0&showinfo=0&modestbranding=1&loop=1&playlist=dQw4w9WgXcQ`,
-        thumbnail: 'https://images.unsplash.com/photo-1485846234645-a62644f84728?w=300&h=200&fit=crop',
-        duration: '0:15',
-        created: new Date().toLocaleString()
+        url: SAMPLE_VIDEOS[randomVideoIndex],
+        thumbnail: SAMPLE_THUMBNAILS[randomThumbnailIndex],
+        duration: `0:${Math.floor(Math.random() * 20) + 10}`,
+        created: 'Just now'
       };
       
       setGeneratedVideos(prev => [newVideo, ...prev]);
@@ -302,73 +394,116 @@ const CreateTab = ({ prompt, setPrompt, isGenerating, setIsGenerating, generated
     }, 3000);
   };
 
+  const suggestedPrompts = [
+    "A cinematic drone shot of a futuristic city at sunset",
+    "A magical forest with glowing mushrooms and floating particles",
+    "An epic space battle with starships and laser beams",
+    "A cozy coffee shop scene with warm lighting and steam"
+  ];
+
   return (
-    <div className="flex-1 flex">
-      {/* Video Generation Area */}
-      <div className="flex-1 p-6">
-        {/* Prompt Input */}
-        <div className="mb-6">
-          <label className="block text-sm font-medium mb-2">Describe your scene</label>
-          <div className="relative">
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="A cinematic shot of a futuristic city at sunset with flying cars and neon lights..."
-              className="w-full h-24 bg-gray-800 text-white p-4 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
-            />
-            <button
-              onClick={handleGenerate}
-              disabled={isGenerating || !prompt.trim()}
-              className="absolute bottom-3 right-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 px-4 py-2 rounded-md transition-colors flex items-center space-x-2"
-            >
-              {isGenerating ? (
-                <>
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Generating...</span>
-                </>
-              ) : (
-                <>
-                  <Wand2 className="w-4 h-4" />
-                  <span>Generate</span>
-                </>
-              )}
-            </button>
+    <div className="flex-1 p-6">
+      {/* Prompt Input Section */}
+      <div className="mb-6">
+        <div className="flex items-center justify-between mb-3">
+          <label className="text-lg font-semibold">Describe your scene</label>
+          <div className="flex items-center space-x-2 text-sm text-gray-400">
+            <Sparkles className="w-4 h-4" />
+            <span>AI-Powered</span>
           </div>
         </div>
-
-        {/* Video Preview */}
-        <div className="mb-6">
-          <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden border border-gray-600">
-            {selectedVideo ? (
-              <VideoPlayer video={selectedVideo} />
+        
+        <div className="relative">
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="A cinematic shot of a futuristic city at sunset with flying cars and neon lights..."
+            className="w-full h-32 bg-gray-800 text-white p-4 rounded-xl border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none transition-all shadow-inner"
+          />
+          <motion.button
+            onClick={handleGenerate}
+            disabled={isGenerating || !prompt.trim()}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            className={`absolute bottom-4 right-4 px-6 py-3 rounded-lg transition-all flex items-center space-x-2 shadow-lg ${
+              isGenerating || !prompt.trim()
+                ? 'bg-gray-600 cursor-not-allowed'
+                : 'bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700'
+            }`}
+          >
+            {isGenerating ? (
+              <>
+                <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                <span>Generating...</span>
+              </>
             ) : (
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="text-center">
-                  <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
-                  <p className="text-gray-400">Your generated video will appear here</p>
-                </div>
-              </div>
+              <>
+                <Wand2 className="w-4 h-4" />
+                <span>Generate</span>
+              </>
             )}
-          </div>
+          </motion.button>
         </div>
 
-        {/* Generation History */}
-        {generatedVideos.length > 0 && (
-          <div>
-            <h3 className="text-lg font-medium mb-4">Recent Generations</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {generatedVideos.map((video) => (
-                <VideoThumbnail 
-                  key={video.id} 
-                  video={video} 
-                  isSelected={selectedVideo?.id === video.id}
-                  onClick={() => setSelectedVideo(video)}
-                />
-              ))}
-            </div>
+        {/* Suggested Prompts */}
+        <div className="mt-4">
+          <p className="text-sm text-gray-400 mb-2">Try these prompts:</p>
+          <div className="flex flex-wrap gap-2">
+            {suggestedPrompts.map((suggestion, index) => (
+              <motion.button
+                key={index}
+                onClick={() => setPrompt(suggestion)}
+                whileHover={{ scale: 1.02 }}
+                className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded-full text-sm transition-all"
+              >
+                {suggestion}
+              </motion.button>
+            ))}
           </div>
-        )}
+        </div>
       </div>
+
+      {/* Video Preview */}
+      <div className="mb-6">
+        <div className="aspect-video bg-gray-800 rounded-xl overflow-hidden border border-gray-600 shadow-2xl">
+          {selectedVideo ? (
+            <VideoPlayer video={selectedVideo} />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center">
+              <div className="text-center">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                >
+                  <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+                </motion.div>
+                <p className="text-gray-400 text-lg">Your generated video will appear here</p>
+                <p className="text-gray-500 text-sm mt-2">Start by describing your scene above</p>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Generation History */}
+      {generatedVideos.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold mb-4 flex items-center space-x-2">
+            <Star className="w-5 h-5 text-yellow-400" />
+            <span>Recent Generations</span>
+          </h3>
+          <div className="grid grid-cols-3 gap-4">
+            {generatedVideos.map((video) => (
+              <VideoThumbnail 
+                key={video.id} 
+                video={video} 
+                isSelected={selectedVideo?.id === video.id}
+                onClick={() => setSelectedVideo(video)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -383,17 +518,23 @@ const VideoPlayer = ({ video }) => {
         frameBorder="0"
         allowFullScreen
       />
-      <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 px-3 py-1 rounded-md">
+      <div className="absolute bottom-4 left-4 bg-black bg-opacity-70 px-3 py-2 rounded-lg backdrop-blur-sm">
         <p className="text-sm font-medium">{video.duration}</p>
       </div>
       <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
         <div className="flex space-x-2">
-          <button className="bg-black bg-opacity-70 p-2 rounded-md hover:bg-opacity-90 transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="bg-black bg-opacity-70 p-2 rounded-lg hover:bg-opacity-90 transition-all backdrop-blur-sm"
+          >
             <Download className="w-4 h-4" />
-          </button>
-          <button className="bg-black bg-opacity-70 p-2 rounded-md hover:bg-opacity-90 transition-colors">
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="bg-black bg-opacity-70 p-2 rounded-lg hover:bg-opacity-90 transition-all backdrop-blur-sm"
+          >
             <Share2 className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
     </div>
@@ -404,9 +545,10 @@ const VideoPlayer = ({ video }) => {
 const VideoThumbnail = ({ video, isSelected, onClick }) => {
   return (
     <motion.div
-      whileHover={{ scale: 1.02 }}
-      className={`cursor-pointer rounded-lg overflow-hidden border-2 transition-colors ${
-        isSelected ? 'border-blue-500' : 'border-gray-600 hover:border-gray-500'
+      whileHover={{ scale: 1.02, y: -2 }}
+      whileTap={{ scale: 0.98 }}
+      className={`cursor-pointer rounded-xl overflow-hidden border-2 transition-all shadow-lg ${
+        isSelected ? 'border-blue-500 shadow-blue-500/20' : 'border-gray-600 hover:border-gray-500'
       }`}
       onClick={onClick}
     >
@@ -416,18 +558,22 @@ const VideoThumbnail = ({ video, isSelected, onClick }) => {
           alt="Video thumbnail"
           className="w-full h-full object-cover"
         />
-        <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded text-xs">
+        <div className="absolute bottom-2 right-2 bg-black bg-opacity-70 px-2 py-1 rounded text-xs font-medium">
           {video.duration}
+        </div>
+        <div className="absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-10 transition-all flex items-center justify-center">
+          <Play className="w-8 h-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
         </div>
       </div>
       <div className="p-3 bg-gray-800">
-        <p className="text-sm truncate mb-1">{video.prompt}</p>
+        <p className="text-sm truncate mb-1 font-medium">{video.prompt}</p>
         <p className="text-xs text-gray-400">{video.created}</p>
       </div>
     </motion.div>
   );
 };
 
+// Other tab components remain similar but with enhanced styling...
 // Scenes Tab Component
 const ScenesTab = () => {
   const [scenes, setScenes] = useState([
@@ -439,7 +585,10 @@ const ScenesTab = () => {
   return (
     <div className="flex-1 p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">SceneBuilder</h2>
+        <h2 className="text-2xl font-bold mb-2 flex items-center space-x-3">
+          <Film className="w-7 h-7 text-blue-400" />
+          <span>SceneBuilder</span>
+        </h2>
         <p className="text-gray-400">Edit and extend your scenes with continuous motion</p>
       </div>
 
@@ -455,13 +604,16 @@ const ScenesTab = () => {
 // Scene Card Component
 const SceneCard = ({ scene }) => {
   const statusColors = {
-    completed: 'bg-green-600',
-    'in-progress': 'bg-yellow-600',
-    pending: 'bg-gray-600'
+    completed: 'bg-green-500',
+    'in-progress': 'bg-yellow-500',
+    pending: 'bg-gray-500'
   };
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+    <motion.div 
+      whileHover={{ y: -2 }}
+      className="bg-gray-800 rounded-xl p-4 border border-gray-700 shadow-lg"
+    >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center space-x-3">
           <div className={`w-3 h-3 rounded-full ${statusColors[scene.status]}`}></div>
@@ -469,33 +621,48 @@ const SceneCard = ({ scene }) => {
           <span className="text-sm text-gray-400">{scene.duration}</span>
         </div>
         <div className="flex space-x-2">
-          <button className="p-2 hover:bg-gray-700 rounded-md transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          >
             <Edit3 className="w-4 h-4" />
-          </button>
-          <button className="p-2 hover:bg-gray-700 rounded-md transition-colors">
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          >
             <Copy className="w-4 h-4" />
-          </button>
-          <button className="p-2 hover:bg-gray-700 rounded-md transition-colors">
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          >
             <MoreVertical className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
       
-      <div className="aspect-video bg-gray-700 rounded-md mb-3">
-        <div className="w-full h-full flex items-center justify-center">
+      <div className="aspect-video bg-gray-700 rounded-lg mb-3 overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-700 to-gray-800">
           <Play className="w-12 h-12 text-gray-400" />
         </div>
       </div>
       
       <div className="flex space-x-2">
-        <button className="flex-1 bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-md transition-colors">
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-4 py-2 rounded-lg transition-all"
+        >
           Extend Scene
-        </button>
-        <button className="px-4 py-2 border border-gray-600 hover:border-gray-500 rounded-md transition-colors">
+        </motion.button>
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          className="px-4 py-2 border border-gray-600 hover:border-gray-500 rounded-lg transition-colors"
+        >
           Edit
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -504,7 +671,10 @@ const AssetsTab = () => {
   return (
     <div className="flex-1 p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Asset Management</h2>
+        <h2 className="text-2xl font-bold mb-2 flex items-center space-x-3">
+          <Layers className="w-7 h-7 text-purple-400" />
+          <span>Asset Management</span>
+        </h2>
         <p className="text-gray-400">Organize your characters, environments, and props</p>
       </div>
 
@@ -523,29 +693,46 @@ const AssetCategory = ({ category }) => {
     Characters: ImageIcon,
     Environments: Monitor,
     Objects: Layers,
-    Effects: Wand2
+    Effects: Sparkles
+  };
+  
+  const colors = {
+    Characters: 'text-green-400',
+    Environments: 'text-blue-400',
+    Objects: 'text-yellow-400',
+    Effects: 'text-purple-400'
   };
   
   const Icon = icons[category];
 
   return (
-    <div className="bg-gray-800 rounded-lg p-4 border border-gray-700">
+    <motion.div 
+      whileHover={{ y: -4 }}
+      className="bg-gray-800 rounded-xl p-4 border border-gray-700 shadow-lg"
+    >
       <div className="flex items-center space-x-3 mb-4">
-        <Icon className="w-5 h-5 text-blue-400" />
+        <Icon className={`w-5 h-5 ${colors[category]}`} />
         <h3 className="font-medium">{category}</h3>
       </div>
       
       <div className="space-y-3">
         <div className="grid grid-cols-2 gap-2">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="aspect-square bg-gray-700 rounded-md hover:bg-gray-600 cursor-pointer transition-colors"></div>
+            <motion.div 
+              key={i} 
+              whileHover={{ scale: 1.05 }}
+              className="aspect-square bg-gray-700 rounded-lg hover:bg-gray-600 cursor-pointer transition-all"
+            />
           ))}
         </div>
-        <button className="w-full p-2 border-2 border-dashed border-gray-600 hover:border-gray-500 rounded-md transition-colors">
+        <motion.button 
+          whileHover={{ scale: 1.02 }}
+          className="w-full p-2 border-2 border-dashed border-gray-600 hover:border-gray-500 rounded-lg transition-colors"
+        >
           <Plus className="w-4 h-4 mx-auto" />
-        </button>
+        </motion.button>
       </div>
-    </div>
+    </motion.div>
   );
 };
 
@@ -554,7 +741,10 @@ const ProjectsTab = () => {
   return (
     <div className="flex-1 p-6">
       <div className="mb-6">
-        <h2 className="text-2xl font-bold mb-2">Projects</h2>
+        <h2 className="text-2xl font-bold mb-2 flex items-center space-x-3">
+          <Grid3X3 className="w-7 h-7 text-cyan-400" />
+          <span>Projects</span>
+        </h2>
         <p className="text-gray-400">Manage your creative projects</p>
       </div>
 
@@ -571,20 +761,30 @@ const ProjectsTab = () => {
 const ProjectCard = ({ projectId }) => {
   return (
     <motion.div
-      whileHover={{ y: -2 }}
-      className="bg-gray-800 rounded-lg overflow-hidden border border-gray-700 hover:border-gray-600 transition-colors cursor-pointer"
+      whileHover={{ y: -4, scale: 1.02 }}
+      className="bg-gray-800 rounded-xl overflow-hidden border border-gray-700 hover:border-gray-600 transition-all cursor-pointer shadow-lg"
     >
-      <div className="aspect-video bg-gray-700"></div>
+      <div className="aspect-video bg-gradient-to-br from-gray-700 to-gray-800 relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Video className="w-12 h-12 text-gray-500" />
+        </div>
+      </div>
       <div className="p-4">
         <h3 className="font-medium mb-2">Project {projectId}</h3>
         <p className="text-sm text-gray-400 mb-3">Created 2 days ago</p>
         <div className="flex space-x-2">
-          <button className="flex-1 bg-blue-600 hover:bg-blue-700 px-3 py-2 rounded-md text-sm transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.02 }}
+            className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 px-3 py-2 rounded-lg text-sm transition-all"
+          >
             Open
-          </button>
-          <button className="p-2 hover:bg-gray-700 rounded-md transition-colors">
+          </motion.button>
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
+          >
             <MoreVertical className="w-4 h-4" />
-          </button>
+          </motion.button>
         </div>
       </div>
     </motion.div>
@@ -594,9 +794,9 @@ const ProjectCard = ({ projectId }) => {
 // Properties Panel Component
 const PropertiesPanel = ({ activeTab }) => {
   return (
-    <div className="w-80 bg-gray-800 border-l border-gray-700 overflow-y-auto">
+    <div className="w-80 bg-gray-800 border-l border-gray-700 overflow-y-auto shadow-xl">
       <div className="p-4">
-        <h3 className="font-medium mb-4">Properties</h3>
+        <h3 className="font-semibold mb-4 text-lg">Properties</h3>
         
         {activeTab === 'create' && <CreateProperties />}
         {activeTab === 'scenes' && <SceneProperties />}
@@ -613,13 +813,13 @@ const CreateProperties = () => {
       {/* Camera Controls */}
       <div>
         <h4 className="font-medium mb-3 flex items-center space-x-2">
-          <Camera className="w-4 h-4" />
+          <Camera className="w-4 h-4 text-blue-400" />
           <span>Camera Controls</span>
         </h4>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm mb-2">Movement</label>
-            <select className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600">
+            <label className="block text-sm mb-2 font-medium">Movement</label>
+            <select className="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Static</option>
               <option>Dolly In</option>
               <option>Dolly Out</option>
@@ -630,8 +830,8 @@ const CreateProperties = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-2">Angle</label>
-            <select className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600">
+            <label className="block text-sm mb-2 font-medium">Angle</label>
+            <select className="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Eye Level</option>
               <option>Low Angle</option>
               <option>High Angle</option>
@@ -640,8 +840,8 @@ const CreateProperties = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-2">Shot Type</label>
-            <select className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600">
+            <label className="block text-sm mb-2 font-medium">Shot Type</label>
+            <select className="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Wide Shot</option>
               <option>Medium Shot</option>
               <option>Close-up</option>
@@ -655,13 +855,13 @@ const CreateProperties = () => {
       {/* Video Settings */}
       <div>
         <h4 className="font-medium mb-3 flex items-center space-x-2">
-          <Sliders className="w-4 h-4" />
+          <Sliders className="w-4 h-4 text-purple-400" />
           <span>Video Settings</span>
         </h4>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm mb-2">Duration</label>
-            <select className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600">
+            <label className="block text-sm mb-2 font-medium">Duration</label>
+            <select className="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>3 seconds</option>
               <option>5 seconds</option>
               <option>10 seconds</option>
@@ -670,20 +870,22 @@ const CreateProperties = () => {
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-2">Aspect Ratio</label>
+            <label className="block text-sm mb-2 font-medium">Aspect Ratio</label>
             <div className="grid grid-cols-3 gap-2">
               {[
                 { ratio: '16:9', icon: Monitor },
                 { ratio: '9:16', icon: Smartphone },
                 { ratio: '4:3', icon: Tablet }
               ].map(({ ratio, icon: Icon }) => (
-                <button
+                <motion.button
                   key={ratio}
-                  className="flex flex-col items-center p-2 bg-gray-700 hover:bg-blue-600 rounded-md transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="flex flex-col items-center p-2 bg-gray-700 hover:bg-blue-600 rounded-lg transition-all"
                 >
                   <Icon className="w-4 h-4 mb-1" />
                   <span className="text-xs">{ratio}</span>
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -692,18 +894,22 @@ const CreateProperties = () => {
 
       {/* Style Settings */}
       <div>
-        <h4 className="font-medium mb-3">Style</h4>
+        <h4 className="font-medium mb-3 flex items-center space-x-2">
+          <Sparkles className="w-4 h-4 text-yellow-400" />
+          <span>Style</span>
+        </h4>
         <div className="space-y-3">
           <div>
-            <label className="block text-sm mb-2">Mood</label>
+            <label className="block text-sm mb-2 font-medium">Mood</label>
             <div className="flex flex-wrap gap-2">
               {['Cinematic', 'Dramatic', 'Bright', 'Dark', 'Vintage'].map((mood) => (
-                <button
+                <motion.button
                   key={mood}
-                  className="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded-full text-sm transition-colors"
+                  whileHover={{ scale: 1.05 }}
+                  className="px-3 py-1 bg-gray-700 hover:bg-blue-600 rounded-full text-sm transition-all"
                 >
                   {mood}
-                </button>
+                </motion.button>
               ))}
             </div>
           </div>
@@ -721,8 +927,8 @@ const SceneProperties = () => {
         <h4 className="font-medium mb-3">Scene Settings</h4>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm mb-2">Transition</label>
-            <select className="w-full bg-gray-700 text-white p-2 rounded-md border border-gray-600">
+            <label className="block text-sm mb-2 font-medium">Transition</label>
+            <select className="w-full bg-gray-700 text-white p-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
               <option>Cut</option>
               <option>Fade</option>
               <option>Dissolve</option>
